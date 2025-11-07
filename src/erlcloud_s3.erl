@@ -1141,7 +1141,7 @@ signature(Config, Path, Date, Region, Method, QueryParams, Headers, Payload) ->
   [Result] = erlcloud_aws:base16(erlcloud_util:sha256_mac( SigningKey, ToSign)),
   Result.
 
--spec make_presigned_v4_url(integer(), string(), atom(), string(), proplist()) -> {ok, string()} | {error, term()}.
+-spec make_presigned_v4_url(integer(), string(), atom(), string(), proplist()) -> string().
 make_presigned_v4_url(ExpireTime, BucketName, Method, Key, Params) ->
   make_presigned_v4_url(ExpireTime, BucketName, Method, Key, Params, default_config()).
 
@@ -2015,17 +2015,17 @@ s3_request4_no_update(Config, Method, Bucket, Path, Subresource, Params, Body,
     end,
 
     S3Host = Config#aws_config.s3_host,
-    
+
     %% Allow to use a customized region
-    %% This seems to add compatibility with S3 like, on-premises 
+    %% This seems to add compatibility with S3 like, on-premises
     %% providers such as Minio
-    S3Region = case Config#aws_config.s3_region of 
+    S3Region = case Config#aws_config.s3_region of
                    "" ->
                        aws_region_from_host(S3Host);
                    UserDefinedRegion ->
                        UserDefinedRegion
                end,
-    
+
     AccessMethod = case Config#aws_config.s3_bucket_access_method of
         auto ->
             case erlcloud_util:is_dns_compliant_name(Bucket) orelse
