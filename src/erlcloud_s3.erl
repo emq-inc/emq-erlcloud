@@ -1168,10 +1168,7 @@ make_presigned_v4_url(ExpireTime, BucketName, Method, Key, QueryParams, Config) 
            {"X-Amz-Credential", Credential},
            {"X-Amz-Date", Date},
            {"X-Amz-Expires", integer_to_list(ExpireTime)}] ++ QueryParams,
-    Headers = case Method of
-                  put -> [{"host", Host}, {"x-amz-server-side-encryption", "AES256"}];
-                  _ -> [{"host", Host}]
-              end,
+    Headers = [{"host", Host}],
     QP2 = [{"X-Amz-SignedHeaders", string:join([K || {K, _} <- Headers], ";")}] ++ QP1,
     Payload = "UNSIGNED-PAYLOAD",
     Signature = signature(Config, Path, Date, Region, Method, QP2, Headers, Payload),
